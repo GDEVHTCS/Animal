@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <link rel="shortcut icon" type="x-icon" href="images/icon.jfif">
+    <title>Animal Sounds</title>
+    <style>
+        body {
+            background-image: url('images/esufroravi.jfif');
+            background-size: cover;
+            font-family: Arial, sans-serif;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9); /* Slightly more opaque for better readability */
+            border: 2px solid #333;
+            border-radius: 10px;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 10px;
+            border: 2px solid #333;
+            border-radius: 10px;
+            background-color: #fefefe;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .section img {
+            width: 100%;
+            border-radius: 10px;
+        }
+        .section h1 {
+            font-size: 22px;
+            margin-top: 0;
+            text-align: center;
+        }
+        .section a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+        }
+        .section a:hover {
+            text-decoration: underline;
+            color: #007BFF;
+        }
+        .audio-container {
+            margin: 10px 0;
+            text-align: center;
+        }
+        .audio-container audio {
+            width: 100%;
+            max-width: 320px;
+        }
+        .section-container {
+            margin: 20px 0;
+        }
+        .section-title {
+            text-align: center;
+            font-size: 32px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+        }
+        .flex {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+        .flex-item {
+            flex: 1 1 calc(33.333% - 40px); /* Three items per row with gap */
+            box-sizing: border-box;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .flex-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+        .search-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .search-container input {
+            width: 80%;
+            max-width: 600px;
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #007BFF;
+            border-radius: 5px;
+        }
+        .search-container input::placeholder {
+            color: #aaa;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="section section-title">
+            <h1>Animal Sound Effects</h1>
+        </div>
+
+        <div class="search-container">
+            <input type="text" id="searchBar" placeholder="Search for an animal..." oninput="filterAnimals()">
+        </div>
+
+        <div class="flex" id="animalList">
+            <!-- Animal sections will be inserted here by JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        // Define the animal data
+        const animals = [
+            { name: 'Rhino', image: 'images/rhino.jfif', audio: 'audios/Rhinoceros Grunts with Inhale - QuickSounds.com.mp3', wiki: 'https://en.wikipedia.org/wiki/Rhinoceros' },
+            { name: 'Bear', image: 'images/bear.jfif', audio: 'audios/bear-191995.mp3', wiki: 'https://en.wikipedia.org/wiki/Bear' },
+            { name: 'Mammoth', image: 'images/mamonti.jfif', audio: 'audios/mammoth-gones-a-nutshell-on-28518.mp3', wiki: 'https://en.wikipedia.org/wiki/Mammoth' },
+            { name: 'Smilodon', image: 'images/R.png', audio: 'audios/1565791239_5e4f4ac70429713.mp3', wiki: 'https://en.wikipedia.org/wiki/Smilodon' },
+            { name: 'Golden Retriever', image: 'images/golden-retriever-isolated-white_191971-18479.avif', audio: 'audios/barking-40068.mp3', wiki: 'https://en.wikipedia.org/wiki/Golden_Retriever' },
+            { name: 'Monkey', image: 'images/monkey-isolated-on-white-background-generate-ai-free-photo.jpg', audio: 'audios/monkey-scream-6407.mp3', wiki: 'https://en.wikipedia.org/wiki/Monkey' },
+            { name: 'Elephant', image: 'images/istockphoto-104097278-612x612.jpg', audio: 'audios/angry-elephant-40916.mp3', wiki: 'https://en.wikipedia.org/wiki/Elephant' },
+            { name: 'Zebra', image: 'images/OIP.jfif', audio: 'audios/Zebra Distant Chirping - QuickSounds.com.mp3', wiki: 'https://en.wikipedia.org/wiki/Zebra' },
+            { name: 'Fox', image: 'images/R.jfif', audio: 'audios/fox_call.wav', wiki: 'https://en.wikipedia.org/wiki/Fox' },
+            { name: 'Mouse', image: 'images/mouse.jfif', audio: 'audios/mouse-squeaks-68287.mp3', wiki: 'https://en.wikipedia.org/wiki/Mouse' },
+            { name: 'Cat', image: 'images/cat.jpg', audio: 'audios/cat-meow-14536.mp3', wiki: 'https://en.wikipedia.org/wiki/Cat' },
+            { name: 'Cheetah', image: 'images/cheeta.jpg', audio: 'audios/cheetah4.mp3', wiki: 'https://en.wikipedia.org/wiki/Cheetah' },
+            { name: 'Horse', image: 'images/horse.jfif', audio: 'audios/1553515851_01430.mp3', wiki: 'https://en.wikipedia.org/wiki/Horse' },
+            { name: 'Koala', image: 'images/koala.png', audio: 'audios/Queensland Koala - QuickSounds.com.mp3', wiki: 'https://en.wikipedia.org/wiki/Koala' },
+            { name: 'Elk', image: 'images/elk.jfif', audio: 'audios/elk-bugle-1425.mp3', wiki: 'https://en.wikipedia.org/wiki/Elk' },
+            // Add more animals if needed
+        ];
+
+        // Function to render animal sections
+        function renderAnimals(animalList) {
+            const container = document.getElementById('animalList');
+            container.innerHTML = '';
+            animalList.forEach(animal => {
+                const section = document.createElement('div');
+                section.className = 'flex-item section';
+                section.innerHTML = `
+                    <h1><a href="${animal.wiki}" target="_blank">${animal.name}</a></h1>
+                    <img src="${animal.image}" alt="${animal.name}">
+                    <div class="audio-container">
+                        <audio controls>
+                            <source src="${animal.audio}" />
+                        </audio>
+                    </div>
+                `;
+                container.appendChild(section);
+            });
+        }
+
+        // Function to filter animals based on search input
+        function filterAnimals() {
+            const query = document.getElementById('searchBar').value.toLowerCase();
+            const filteredAnimals = animals.filter(animal => animal.name.toLowerCase().includes(query));
+            renderAnimals(filteredAnimals);
+        }
+
+        // Initial rendering of animals
+        renderAnimals(animals);
+    </script>
+</body>
+</html>
